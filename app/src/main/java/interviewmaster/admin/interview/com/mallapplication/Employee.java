@@ -54,7 +54,7 @@ public class Employee {
     private String imageURL;
     @SerializedName("skills")
     @Expose
-    private List<Skill> skills = null;
+    public List<Skill> skills = null;
 
     public String getId() {
         return id;

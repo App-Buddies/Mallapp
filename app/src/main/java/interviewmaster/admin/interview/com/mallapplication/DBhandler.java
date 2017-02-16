@@ -8,8 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static java.util.Collection.*;
 
 /**
  * Created by ADMIN on 15-02-2017.
@@ -60,11 +63,14 @@ public class DBhandler extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-
+int i=0;
     public void addFoodCountryName(List<Example> item) {
         this.array = item;
+
         SQLiteDatabase db = this.getWritableDatabase();
         Employee it = array.get(0).getEmployee().get(0);
+        Log.d("kk", String.valueOf(i++));
+
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_ID, it.getId());
@@ -78,17 +84,20 @@ public class DBhandler extends SQLiteOpenHelper {
             values.put(KEY_DESIGNATION, it.getDesignation());
             values.put(KEY_MOBILE, it.getMobile());
             values.put(KEY_EMAIL, it.getEmail());
+            values.put(KEY_IMAGEURL,it.getImageURL());
             values.put(KEY_NATIONALITY, it.getNationality());
             values.put(KEY_LANGUAGE, it.getLanguage());
-Log.d("string",it.getDesignation());
-            for (int i = 0; i < it.getSkills().get(0).getTechnical().size(); i++) {
+            Log.d("string",it.getDesignation());
+            values.put(KEY_TECHNICAL, it.getSkills().get(0).getTechnical().toString().replace("[","").replace("]",""));
+            values.put(KEY_EXTRACURRICULAR, it.getSkills().get(0).getExtraCurricular().toString().replace("[","").replace("]",""));
+            /*for (int i = 0; i < it.getSkills().get(0).getTechnical().size(); i++) {
                 values.put(KEY_TECHNICAL, it.getSkills().get(0).getTechnical().get(i));
             }
             for (int i = 0; i < it.getSkills().get(0).getExtraCurricular().size(); i++) {
                 values.put(KEY_EXTRACURRICULAR, it.getSkills().get(0).getExtraCurricular().get(i));
-            }
+            }*/
 
-            db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+          db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             //db.insert(TABLE_NAME, null, values);
             db.close();
         } catch (Exception e) {
@@ -98,16 +107,23 @@ Log.d("string",it.getDesignation());
 
 
 
-    public ArrayList<Example> getAllFoodCountryName() {
+    public ArrayList<Employee> getAllFoodCountryName() {
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Employee> cityList = null;
-        ArrayList<Example> xyz=null;
+        ArrayList<Employee> cityList = new ArrayList<Employee>();
+       // ArrayList<Example>xyz=new ArrayList<Example>();
+
         try {
-            cityList = new ArrayList<>();
+            //cityList = new ArrayList<>();
             String QUERY = "SELECT * FROM " + TABLE_NAME;
             Cursor cursor = db.rawQuery(QUERY, null);
+            //Example example=new Example();
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
+
+
+
+
+
                     Employee item=new Employee();
                     item.setId(cursor.getString(0));
                     item.setFirstName(cursor.getString(1));
@@ -117,14 +133,53 @@ Log.d("string",it.getDesignation());
                     item.setZipcode(cursor.getString(5));
                     item.setGender(cursor.getString(6));
                     item.setDob(cursor.getString(7));
-                    item.setMobile(cursor.getString(8));
-                    item.setEmail(cursor.getString(9));
-                    item.setNationality(cursor.getString(10));
-                    item.setLanguage(cursor.getString(11));
-                    Example example=new Example();
-                    example.setEmployee(cityList);
-                    xyz=new ArrayList<Example>();
-                    xyz.add(example);
+                    item.setDesignation(cursor.getString(8));
+                    item.setMobile(cursor.getString(9));
+                    item.setEmail(cursor.getString(10));
+                    item.setNationality(cursor.getString(11));
+                    item.setLanguage(cursor.getString(12));
+                    item.setImageURL(cursor.getString(13));
+
+                    Skill skill=new Skill();
+                    skill.setTechnical(Arrays.asList(cursor.getString(14).split(",")));
+                    skill.setExtraCurricular(Arrays.asList(cursor.getString(15).split(",")));
+                 //   Log.d("s", String.valueOf(Arrays.asList(cursor.getString(12).split(","))));
+                   /* skill.setTechnical(new ArrayList<String>(cursor.getString(12).split(",")));
+                    skill.setExtraCurricular(new ArrayList<String>(cursor.getString(13).split(",")));*/
+                    List<Skill> skills=new ArrayList<Skill>();
+                    skills.add(skill);
+                    item.setSkills(skills);
+                    item.setSkills(new ArrayList<Skill>());
+                    cityList.add(item);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  //  example.setEmployee(cityList);
+
+                   // xyz.add(example);
+
+
+
+
                     //Log.d("string",xyz.get(0).getEmployee().get(1).toString());
 
 
@@ -148,12 +203,15 @@ Log.d("string",it.getDesignation());
 
                     //cityList.addAll((Collection<? extends Example>) item);
                 }
+
+              /*  example.setEmployee(cityList);
+                xyz.add(example);*/
             }
             db.close();
         } catch (Exception e) {
             Log.e("error", e + "");
         }
-        return  xyz;
+        return  cityList;
     }
 
    /* public ArrayList<Example> getAllFoodCountryName() {

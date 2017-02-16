@@ -33,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
     Communicator communicator;
     private Gson gson;
     DBhandler dBhandler=new DBhandler(this);
-    List<Example> employeelist;
+    List<Employee> employeelist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-     //   employeelist = new ArrayList<>();
+     //  employeelist = new ArrayList<>();
         listView = (RecyclerView)findViewById(R.id.list_View);
         listView.hasFixedSize();
         final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -47,18 +47,14 @@ public class MainActivity extends AppCompatActivity {
         listView.setLayoutManager(layoutManager);
         getting();
         withoutnet();
-      /*if(isConnectingToInternet()) {
-          getting();
-      }
-        else{
-          withoutnet();
-      }*/
+
 
     }
 
     public void getting(){
         ApiService api = RetrofitClient.getApiService();
         Call<List<Example>> call = api.getMyJSON();
+
         Log.d("called","called");
         //Employ <Employee>employee=new ArrayList<Employee>();
         call.enqueue(new Callback<List<Example>>() {
@@ -68,13 +64,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("called","seccalled");
                 // Log.d("resspons", response.toString());
                 if(response.isSuccessful()) {
-                    employeelist=response.body();
+
+                    List<Example> employeelist=response.body();
+                    Log.d("ans", String.valueOf(employeelist.size()));
+
+                   /* for(int i=0;i<response.body().size();i++){
+                        dBhandler.addFoodCountryName(employeelist);
+
+                    }*/
                     for(Example e:employeelist){
-                        Log.d("ans", String.valueOf(employeelist.get(0).getEmployee()));
+                     // Log.d("ans", String.valueOf(employeelist.get(0).getEmployee()));
+                       // dBhandler.addFoodCountryName(employeelist);
+                        Log.d("Size", String.valueOf(employeelist.size()));
+
+
                     }
                     dBhandler.addFoodCountryName(employeelist);
                     Log.d("added","successfully");
-                    withoutnet();
+              //  withoutnet();
+
+
+
+
                     }
                 else{
                     Log.d("failed","failure");
@@ -111,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public  void withoutnet(){
         employeelist=dBhandler.getAllFoodCountryName();
-        if(employeelist!=null){
+if(employeelist!=null){
         myAdapte = new MyAdapte(getApplicationContext(), employeelist);
         listView.setAdapter(myAdapte);}
     }

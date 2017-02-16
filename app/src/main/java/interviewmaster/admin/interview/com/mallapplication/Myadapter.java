@@ -21,12 +21,12 @@ import java.util.List;
 
 class MyAdapte extends RecyclerView.Adapter<MyAdapte.ViewHldr> {
     Context context;
-    List<Example> array;
+    List<Employee> array;
     LayoutInflater layoutInflater;
     Communicator communicator;
     Employee item;
 
-    public MyAdapte(Context activity, List<Example> array) {
+    public MyAdapte(Context activity, List<Employee> array) {
         this.context = activity;
         this.array = array;
         layoutInflater = LayoutInflater.from(context.getApplicationContext());
@@ -43,19 +43,33 @@ class MyAdapte extends RecyclerView.Adapter<MyAdapte.ViewHldr> {
 
     @Override
     public void onBindViewHolder(final ViewHldr holder, final int position) {
-        item = array.get(0).getEmployee().get(position); //this should give an error, you are trying to get employee object from s list of example
-        holder.firstName.setText(item.getFirstName());
+
+
+        item = array.get(position); //this should give an error, you are trying to get employee object from s list of example
+
+       holder.firstName.setText(item.getFirstName());
+        //Log.d("as",item.getFirstName());
+
         //holder.lastName.setText(item.getLastName());
-        for (i = 0; i < item.getSkills().get(0).getExtraCurricular().size(); i++) {
+      List<Skill> list=item.getSkills();
+      /*  for (Skill s:list) {
+            Log.d("as",s.toString());
+            //  String joinString1=String.join("-","welcome","to","javatpoint");
+            holder.lastName.append((CharSequence) s);
+
+
+        }*/
+      /*  for (i = 0; i < list.size(); i++) {
             //  String joinString1=String.join("-","welcome","to","javatpoint");
             holder.lastName.append(item.getSkills().get(0).getExtraCurricular().get(i) + " ");
 
-        }
-        for (i = 0; i < item.getSkills().get(0).getTechnical().size(); i++) {
+        }*/
+       /* for (i = 0; i < item.getSkills().get(0).getTechnical().size(); i++) {
             holder.designation.append(item.getSkills().get(0).getTechnical().get(i));
 
-        }
-        holder.city.setText(item.getCity());
+        }*/
+
+       holder.city.setText(item.getImageURL());
 
         if (!TextUtils.isEmpty(item.getImageURL())) {
             Picasso.with(holder.context)
@@ -95,21 +109,21 @@ class MyAdapte extends RecyclerView.Adapter<MyAdapte.ViewHldr> {
 
     @Override
     public int getItemCount() {
-        if (array.get(0).getEmployee().size() == 0) {
+        if (array.size() == 0) {
             return 0;
         } else {
-            return array.get(0).getEmployee().size();
+            return array.size();
         }
-
+        //return array.size();
     }
 
     public class ViewHldr extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView firstName, lastName, designation, city;
-        List<Example> array = new ArrayList<>();
+        List<Employee> array = new ArrayList<>();
         Context context;
         ImageView imageView;
 
-        public ViewHldr(View itemView, Context activity, List<Example> array) {
+        public ViewHldr(View itemView, Context activity, List<Employee> array) {
             super(itemView);
             this.context = activity;
             this.array = array;
@@ -125,7 +139,7 @@ class MyAdapte extends RecyclerView.Adapter<MyAdapte.ViewHldr> {
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            Employee array = this.array.get(0).getEmployee().get(0);
+            Employee array = this.array.get(position);
             String firstname = array.getFirstName();
             communicator.respond(firstname);
         }
